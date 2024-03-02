@@ -18,6 +18,7 @@ volatile int btn_r_flag = 0;
 volatile int btn_g_flag = 0;
 volatile int btn_b_flag = 0;
 volatile int btn_y_flag = 0;
+volatile int callback_flag = 0;
 
 const int LED_PIN_R = 10;
 const int LED_PIN_G = 11;
@@ -29,6 +30,7 @@ const int BUZ_PIN = 16;
 const int TAM_SEQUENCIA = 4;
 
 void btn_callback(uint gpio, uint32_t events){
+    callback_flag = 1;
     if (gpio == BTN_PIN_R) btn_r_flag = 1;
     if (gpio == BTN_PIN_G) btn_g_flag = 1;
     if (gpio == BTN_PIN_B) btn_b_flag = 1;
@@ -147,38 +149,44 @@ int main() {
             for (int j = 0; j <= i; j++){
                 buzzer(sequencia[j], 1, BUZ_PIN);
                 led(sequencia[j], 500);
-                sleep_ms(2000);
-                printf("i: %d\n", i);
-                printf("j: %d\n", j);
-                printf("Toca sequencia\n");
+                sleep_ms(1000);
             }
+            etapa_player = 0;
             
             while(etapa_player <= i && !erro){
                 if (btn_r_flag){
-                    buzzer(1, 500, BUZ_PIN);
-                    led(1, 500);
+                    buzzer(1, 1, BUZ_PIN);
+                    //led(1, 500);
                     sequencia_player[etapa_player] = 1;
                     etapa_player += 1;
+                    btn_r_flag = 0;
                 }
                 if (btn_g_flag){
-                    buzzer(2, 500, BUZ_PIN);
-                    led(2, 500);
+                    buzzer(2, 1, BUZ_PIN);
+                    //led(2, 500);
                     sequencia_player[etapa_player] = 2;
                     etapa_player += 1;
+                    btn_g_flag = 0;
                 }
                 if (btn_b_flag){
-                    buzzer(3, 500, BUZ_PIN);
-                    led(3, 500);
+                    buzzer(3, 1, BUZ_PIN);
+                    //led(3, 500);
                     sequencia_player[etapa_player] = 3;
                     etapa_player += 1;
+                    btn_b_flag;
                 }
                 if (btn_y_flag){
-                    buzzer(4, 500, BUZ_PIN);
-                    led(4, 500);
+                    buzzer(4, 1, BUZ_PIN);
+                    //led(4, 500);
                     sequencia_player[etapa_player] = 4;
                     etapa_player += 1;
+                    btn_y_flag;
                 }
-                if (sequencia_player[etapa_player-1] != sequencia[etapa_player-1]) erro = 1;
+                if (sequencia_player[etapa_player-1] != sequencia[etapa_player-1] && callback_flag == 1){
+                    erro = 1;
+                    callback_flag = 0;
+                }
+                if (callback_flag == 1) callback_flag = 0;
             }
 
             if (erro){
