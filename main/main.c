@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include "pico/stdlib.h"
 #include "hardware/gpio.h"
+#include "time.h"
 
 const int BTN_PIN_R = 18;
 const int BTN_PIN_G = 19;
@@ -27,7 +28,7 @@ const int LED_PIN_Y = 13;
 
 const int BUZ_PIN = 16;
 
-const int TAM_SEQUENCIA = 4;
+const int TAM_SEQUENCIA = 10;
 
 void btn_callback(uint gpio, uint32_t events){
     callback_flag = 1;
@@ -80,15 +81,15 @@ void led(int codigo, int t){
     gpio_put(pino, 0);
 }
 
-// int gera_sequencia(int *psequencia[]) {
-//     for (int i =  0; i < 100; i++){
-//         psequencia[i] = (rand() % 4) + 1;
-//     }
-// }
+void gera_sequencia(int *psequencia) {
+    for (int i =  0; i < TAM_SEQUENCIA; i++){
+        psequencia[i] = (rand() % 4) + 1;
+    }
+}
 
 int main() {
     stdio_init_all();
-    //srand(time(NULL));
+    srand(time(NULL));
 
     gpio_init(BTN_PIN_R);
     gpio_set_dir(BTN_PIN_R, GPIO_IN);
@@ -130,20 +131,20 @@ int main() {
     gpio_set_dir(BUZ_PIN, GPIO_OUT);
 
     int sequencia[TAM_SEQUENCIA];
-    sequencia[0] = 1;
-    sequencia[1] = 2;
-    sequencia[2] = 3;
-    sequencia[3] = 4;
+    // sequencia[0] = 1;
+    // sequencia[1] = 2;
+    // sequencia[2] = 3;
+    // sequencia[3] = 4;
 
     int sequencia_player[TAM_SEQUENCIA];
     int etapa_player = 0;
 
-    //gera_sequencia(&sequencia);
+    gera_sequencia(sequencia);
 
     int erro = 0;
 
     while (true) {
-        for (int i = 0; i < 4; i ++){
+        for (int i = 0; i < TAM_SEQUENCIA; i ++){
             //Toca a sequencia
             printf("i: %d\n", i);
             for (int j = 0; j <= i; j++){
@@ -194,7 +195,7 @@ int main() {
             }
 
             if (erro){
-                //script erro
+                gera_sequencia(sequencia);
                 break;
             } else{
                 sleep_ms(500);
