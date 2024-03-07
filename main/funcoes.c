@@ -27,6 +27,7 @@ volatile int btn_g_flag = 0;
 volatile int btn_b_flag = 0;
 volatile int btn_y_flag = 0;
 volatile int callback_flag = 0;
+volatile int timer_fired = 0;
 
 
 void btn_callback(uint gpio, uint32_t events){
@@ -168,4 +169,9 @@ void playMelody(){
 
         
   }
+}
+
+int64_t alarm_callback(alarm_id_t id, void *user_data) {
+    timer_fired = 1;
+    return 0;
 }

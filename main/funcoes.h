@@ -23,6 +23,7 @@ extern volatile int btn_g_flag;
 extern volatile int btn_b_flag;
 extern volatile int btn_y_flag;
 extern volatile int callback_flag;
+extern volatile int timer_fired;
 
 #define NOTE_B0  31
 #define NOTE_C1  33
@@ -123,6 +124,7 @@ void buzzer(int freq, int tempo);
 void som_e_led(int codigo, int tempo, int pin);
 void script_erro(int pontos);
 void gera_sequencia(int *psequencia);
+int64_t alarm_callback(alarm_id_t id, void *user_data);
 
 void playMelody(void);
 void playTone(int tone, int duration);

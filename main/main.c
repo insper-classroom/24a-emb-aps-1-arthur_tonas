@@ -111,10 +111,19 @@ int main() {
             }
             etapa_player = 0;
             
+            alarm_id_t alarm = add_alarm_in_ms(5000, alarm_callback, NULL, false);
+            if (!alarm) {
+                printf("Failed to add timer\n");
+            }
             while(etapa_player <= i && !erro){
                 // ESPERA O JOGADOR APERTAR ANDO
-                if (callback_flag){
 
+                if (timer_fired){
+                    timer_fired = 0;
+                    erro = 1;
+                }
+                if (callback_flag){
+                    cancel_alarm(alarm);
                     if (btn_r_flag){
                         som_e_led(1, t_dificuldade, BUZ_PIN);
                         sequencia_player[etapa_player] = 1;
