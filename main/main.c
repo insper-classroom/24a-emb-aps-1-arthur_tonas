@@ -58,7 +58,7 @@ int main() {
     int sequencia[TAM_SEQUENCIA];
 
     int sequencia_player[TAM_SEQUENCIA];
-    int etapa_player = 0;
+    int etapa_player;
 
     gera_sequencia(sequencia);
 
