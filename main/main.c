@@ -28,7 +28,7 @@ const int LED_PIN_Y = 13;
 
 const int BUZ_PIN = 16;
 
-const int TAM_SEQUENCIA = 10;
+const int TAM_SEQUENCIA = 100;
 
 void btn_callback(uint gpio, uint32_t events){
     callback_flag = 1;
@@ -36,6 +36,19 @@ void btn_callback(uint gpio, uint32_t events){
     if (gpio == BTN_PIN_G) btn_g_flag = 1;
     if (gpio == BTN_PIN_B) btn_b_flag = 1;
     if (gpio == BTN_PIN_Y) btn_y_flag = 1;
+}
+
+void buzzer(int freq, int tempo){
+    int tempo_us = tempo * 1000;
+    int periodo_us = 1000000 / freq;
+    int ciclos = tempo_us / periodo_us;
+
+    for (int i = 0; i < ciclos; i++){
+        gpio_put(BUZ_PIN, 1);
+        sleep_us(freq/2);
+        gpio_put(BUZ_PIN, 0);
+        sleep_us(freq/2);
+    }
 }
 
 void som_e_led(int codigo, int tempo, int pin){
@@ -70,6 +83,21 @@ void som_e_led(int codigo, int tempo, int pin){
     gpio_put(led_pin, 0);
 }
 
+void script_erro(int pontos){
+    for (int i = 0; i < pontos; i ++){
+        gpio_put(LED_PIN_R, 1);
+        gpio_put(LED_PIN_G, 1);
+        gpio_put(LED_PIN_B, 1);
+        gpio_put(LED_PIN_Y, 1);
+        buzzer(1000, 500);
+        gpio_put(LED_PIN_R, 0);
+        gpio_put(LED_PIN_G, 0);
+        gpio_put(LED_PIN_B, 0);
+        gpio_put(LED_PIN_Y, 0);
+        sleep_ms(500);
+
+    }
+}
 
 void gera_sequencia(int *psequencia) {
     for (int i =  0; i < TAM_SEQUENCIA; i++){
@@ -176,11 +204,12 @@ int main() {
             }
 
             if (erro){
+                erro = 0;
+                script_erro(i);
                 gera_sequencia(sequencia);
-                //script erro
                 break; // NÃO TENHO CERTEZA SE ESSE BREAK TA FUNCIONANDO COMO DEVERIA
             } else{
-                sleep_ms(500); // PODE AJUSTAR ESSE SLEEP SE NECESSÁRIO
+                sleep_ms(1000); // PODE AJUSTAR ESSE SLEEP SE NECESSÁRIO
                 //script acerto
             }
         }
