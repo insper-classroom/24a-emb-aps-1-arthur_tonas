@@ -10,10 +10,11 @@
 #include "hardware/gpio.h"
 #include "time.h"
 #include "funcoes.h"
+#include "hardware/rtc.h"
+#include "pico/util/datetime.h"
 
 int main() {
     stdio_init_all();
-    srand(time(NULL));
 
     gpio_init(BTN_PIN_R);
     gpio_set_dir(BTN_PIN_R, GPIO_IN);
@@ -63,7 +64,40 @@ int main() {
 
     int erro = 0;
 
+    // Start on Wednesday 13th January 2021 11:20:00
+    datetime_t t = {
+        .year  = 2020,
+        .month = 01,
+        .day   = 13,
+        .dotw  = 3, // 0 is Sunday, so 3 is Wednesday
+        .hour  = 11,
+        .min   = 20,
+        .sec   = 00
+    };
+
+    // Start the RTC
+    rtc_init();
+    rtc_set_datetime(&t);
+
+    datetime_t t_atual;
+
     while (true) {
+        
+        while(!callback_flag){    
+        }
+        sleep_ms(1000);
+        callback_flag = 0;
+        btn_r_flag = 0;
+        btn_g_flag = 0;
+        btn_b_flag = 0;
+        btn_y_flag = 0;
+        rtc_get_datetime(&t_atual);
+        unsigned long seed = t_atual.year + t_atual.month + t_atual.day +
+                         t_atual.hour + t_atual.min + t_atual.sec;
+        srand(seed);
+        
+
+
         for (int i = 0; i < TAM_SEQUENCIA; i ++){
             // TOCA SEQUÊNCIA ATÉ O NÍVEL
             printf("i: %d\n", i);

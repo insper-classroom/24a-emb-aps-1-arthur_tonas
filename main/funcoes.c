@@ -1,5 +1,9 @@
 #include "funcoes.h"
 #include "time.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include "pico/stdlib.h"
+#include "hardware/gpio.h"
 
 
 const int BTN_PIN_R = 18;
