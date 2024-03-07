@@ -82,6 +82,7 @@ int main() {
     datetime_t t_atual;
 
     while (true) {
+        int t_dificuldade = 500;
         playMelody();
         
         while(!callback_flag){    
@@ -101,10 +102,12 @@ int main() {
 
         for (int i = 0; i < TAM_SEQUENCIA; i ++){
             // TOCA SEQUÊNCIA ATÉ O NÍVEL
-            printf("i: %d\n", i);
+            if (i % 2 == 0){
+                t_dificuldade -= 50;
+            }
             for (int j = 0; j <= i; j++){
-                som_e_led(sequencia[j], 500, BUZ_PIN);
-                sleep_ms(500);
+                som_e_led(sequencia[j], t_dificuldade, BUZ_PIN);
+                sleep_ms(t_dificuldade);
             }
             etapa_player = 0;
             
@@ -113,25 +116,25 @@ int main() {
                 if (callback_flag){
 
                     if (btn_r_flag){
-                        som_e_led(1, 500, BUZ_PIN);
+                        som_e_led(1, t_dificuldade, BUZ_PIN);
                         sequencia_player[etapa_player] = 1;
                         etapa_player += 1;
                         btn_r_flag = 0;
                     }
                     if (btn_g_flag){
-                        som_e_led(2, 500, BUZ_PIN);
+                        som_e_led(2, t_dificuldade, BUZ_PIN);
                         sequencia_player[etapa_player] = 2;
                         etapa_player += 1;
                         btn_g_flag = 0;
                     }
                     if (btn_b_flag){
-                        som_e_led(3, 500, BUZ_PIN);
+                        som_e_led(3, t_dificuldade, BUZ_PIN);
                         sequencia_player[etapa_player] = 3;
                         etapa_player += 1;
                         btn_b_flag = 0;
                     }
                     if (btn_y_flag){
-                        som_e_led(4, 500, BUZ_PIN);
+                        som_e_led(4, t_dificuldade, BUZ_PIN);
                         sequencia_player[etapa_player] = 4;
                         etapa_player += 1;
                         btn_y_flag = 0;
@@ -148,7 +151,7 @@ int main() {
                 erro = 0;
                 script_erro(i);
                 gera_sequencia(sequencia);
-                break; // NÃO TENHO CERTEZA SE ESSE BREAK TA FUNCIONANDO COMO DEVERIA
+                break;
             } else{
                 sleep_ms(1000); // PODE AJUSTAR ESSE SLEEP SE NECESSÁRIO
                 //script acerto
