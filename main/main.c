@@ -45,9 +45,9 @@ void buzzer(int freq, int tempo){
 
     for (int i = 0; i < ciclos; i++){
         gpio_put(BUZ_PIN, 1);
-        sleep_us(freq/2);
+        sleep_us(periodo_us/2);
         gpio_put(BUZ_PIN, 0);
-        sleep_us(freq/2);
+        sleep_us(periodo_us/2);
     }
 }
 
@@ -56,29 +56,29 @@ void som_e_led(int codigo, int tempo, int pin){
     int led_pin;
 
     if (codigo == 1){
-        freq = 200;
+        freq = 523;
         led_pin = LED_PIN_R;
     } else if (codigo == 2){
-        freq = 300;
+        freq = 587;
         led_pin = LED_PIN_G;
     } else if (codigo == 3){
-        freq = 400;
+        freq = 659;
         led_pin = LED_PIN_B;
     } else if (codigo == 4){
-        freq = 500;
+        freq = 698;
         led_pin = LED_PIN_Y;
     }
 
-    int tempo_us = tempo * 1000000;
+    int tempo_us = tempo * 1000;
     int periodo_us = 1000000 / freq;
     int ciclos = tempo_us / periodo_us;
 
     gpio_put(led_pin, 1);
     for (int i = 0; i < ciclos; i++){
         gpio_put(pin, 1);
-        sleep_us(freq/2);
+        sleep_us(periodo_us/2);
         gpio_put(pin, 0);
-        sleep_us(freq/2);
+        sleep_us(periodo_us/2);
     }
     gpio_put(led_pin, 0);
 }
@@ -162,7 +162,7 @@ int main() {
             // TOCA SEQUÊNCIA ATÉ O NÍVEL
             printf("i: %d\n", i);
             for (int j = 0; j <= i; j++){
-                som_e_led(sequencia[j], 1, BUZ_PIN);
+                som_e_led(sequencia[j], 500, BUZ_PIN);
                 sleep_ms(500);
             }
             etapa_player = 0;
@@ -172,25 +172,25 @@ int main() {
                 if (callback_flag){
 
                     if (btn_r_flag){
-                        som_e_led(1, 1, BUZ_PIN);
+                        som_e_led(1, 500, BUZ_PIN);
                         sequencia_player[etapa_player] = 1;
                         etapa_player += 1;
                         btn_r_flag = 0;
                     }
                     if (btn_g_flag){
-                        som_e_led(2, 1, BUZ_PIN);
+                        som_e_led(2, 500, BUZ_PIN);
                         sequencia_player[etapa_player] = 2;
                         etapa_player += 1;
                         btn_g_flag = 0;
                     }
                     if (btn_b_flag){
-                        som_e_led(3, 1, BUZ_PIN);
+                        som_e_led(3, 500, BUZ_PIN);
                         sequencia_player[etapa_player] = 3;
                         etapa_player += 1;
                         btn_b_flag = 0;
                     }
                     if (btn_y_flag){
-                        som_e_led(4, 1, BUZ_PIN);
+                        som_e_led(4, 500, BUZ_PIN);
                         sequencia_player[etapa_player] = 4;
                         etapa_player += 1;
                         btn_y_flag = 0;
