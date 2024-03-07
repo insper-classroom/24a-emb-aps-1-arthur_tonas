@@ -82,6 +82,7 @@ int main() {
     datetime_t t_atual;
 
     while (true) {
+        playMelody();
         
         while(!callback_flag){    
         }

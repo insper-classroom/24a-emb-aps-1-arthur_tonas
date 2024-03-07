@@ -20,6 +20,8 @@ const int BUZ_PIN = 16;
 
 const int TAM_SEQUENCIA = 100;
 
+const int TEMPO = 140;
+
 volatile int btn_r_flag = 0;
 volatile int btn_g_flag = 0;
 volatile int btn_b_flag = 0;
@@ -100,4 +102,70 @@ void gera_sequencia(int *psequencia) {
     for (int i =  0; i < TAM_SEQUENCIA; i++){
         psequencia[i] = (rand() % 4) + 1;
     }
+}
+
+
+void playMelody(){
+    int melody[] = {
+        // Cantina BAnd - Star wars 
+        // Score available at https://musescore.com/user/6795541/scores/1606876
+        NOTE_B4,-4, NOTE_E5,-4, NOTE_B4,-4, NOTE_E5,-4, 
+        NOTE_B4,8,  NOTE_E5,-4, NOTE_B4,8, REST,8,  NOTE_AS4,8, NOTE_B4,8, 
+        NOTE_B4,8,  NOTE_AS4,8, NOTE_B4,8, NOTE_A4,8, REST,8, NOTE_GS4,8, NOTE_A4,8, NOTE_G4,8,
+        NOTE_G4,4,  NOTE_E4,-2, 
+        NOTE_B4,-4, NOTE_E5,-4, NOTE_B4,-4, NOTE_E5,-4, 
+        NOTE_B4,8,  NOTE_E5,-4, NOTE_B4,8, REST,8,  NOTE_AS4,8, NOTE_B4,8,
+
+        NOTE_A4,-4, NOTE_A4,-4, NOTE_GS4,8, NOTE_A4,-4,
+        NOTE_D5,8,  NOTE_C5,-4, NOTE_B4,-4, NOTE_A4,-4,
+        NOTE_B4,-4, NOTE_E5,-4, NOTE_B4,-4, NOTE_E5,-4, 
+        NOTE_B4,8,  NOTE_E5,-4, NOTE_B4,8, REST,8,  NOTE_AS4,8, NOTE_B4,8,
+        NOTE_D5,4, NOTE_D5,-4, NOTE_B4,8, NOTE_A4,-4,
+        NOTE_G4,-4, NOTE_E4,-2,
+        NOTE_E4, 2, NOTE_G4,2,
+        NOTE_B4, 2, NOTE_D5,2,
+
+        NOTE_F5, -4, NOTE_E5,-4, NOTE_AS4,8, NOTE_AS4,8, NOTE_B4,4, NOTE_G4,4, 
+    };
+
+    int notes = 64;
+
+    int wholenote = (60000 * 2) / TEMPO;
+
+    int divider = 0, noteDuration = 0;
+
+    for (int thisNote = 0; thisNote < notes * 2; thisNote = thisNote + 2) {
+
+        // calculates the duration of each note
+        gpio_put(LED_PIN_R, 1);
+        gpio_put(LED_PIN_G, 1);
+        gpio_put(LED_PIN_B, 1);
+        gpio_put(LED_PIN_Y, 1);
+
+        divider = melody[thisNote + 1];
+        if (divider > 0) {
+        // regular note, just proceed
+        noteDuration = (wholenote) / divider;
+        } else if (divider < 0) {
+        // dotted notes are represented with negative durations!!
+        noteDuration = (wholenote) / abs(divider);
+        noteDuration *= 1.5; // increases the duration in half for dotted notes
+        }
+
+        // we only play the note for 90% of the duration, leaving 10% as a pause
+        buzzer(melody[thisNote], noteDuration*0.9);
+        
+        gpio_put(LED_PIN_R, 0);
+        gpio_put(LED_PIN_G, 0);
+        gpio_put(LED_PIN_B, 0);
+        gpio_put(LED_PIN_Y, 0);
+
+        sleep_ms(noteDuration*0.1);
+
+        if (callback_flag == 1) {
+            break; // Sai do loop se callback_flag for igual a 1
+        }
+
+        
+  }
 }
