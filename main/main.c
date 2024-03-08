@@ -10,7 +10,6 @@
 #include "hardware/gpio.h"
 #include "time.h"
 #include "funcoes.h"
-#include "hardware/rtc.h"
 #include "pico/util/datetime.h"
 
 int main() {
@@ -60,26 +59,7 @@ int main() {
     int sequencia_player[TAM_SEQUENCIA];
     int etapa_player;
 
-    gera_sequencia(sequencia);
-
     int erro = 0;
-
-    // Start on Wednesday 13th January 2021 11:20:00
-    datetime_t t = {
-        .year  = 2020,
-        .month = 01,
-        .day   = 13,
-        .dotw  = 3, // 0 is Sunday, so 3 is Wednesday
-        .hour  = 11,
-        .min   = 20,
-        .sec   = 00
-    };
-
-    // Start the RTC
-    rtc_init();
-    rtc_set_datetime(&t);
-
-    datetime_t t_atual;
 
     while (true) {
         int t_dificuldade = 500;
@@ -93,10 +73,11 @@ int main() {
         btn_g_flag = 0;
         btn_b_flag = 0;
         btn_y_flag = 0;
-        rtc_get_datetime(&t_atual);
-        unsigned long seed = t_atual.year + t_atual.month + t_atual.day +
-                         t_atual.hour + t_atual.min + t_atual.sec;
-        srand(seed);
+
+        uint64_t start_us = to_us_since_boot(get_absolute_time());
+        srand(start_us);
+
+        gera_sequencia(sequencia);
         
 
 
@@ -116,7 +97,7 @@ int main() {
                 printf("Failed to add timer\n");
             }
             while(etapa_player <= i && !erro){
-                // ESPERA O JOGADOR APERTAR ANDO
+                // ESPERA O JOGADOR APERTAR
 
                 if (timer_fired){
                     timer_fired = 0;
@@ -159,11 +140,9 @@ int main() {
             if (erro){
                 erro = 0;
                 script_erro(i);
-                gera_sequencia(sequencia);
                 break;
             } else{
-                sleep_ms(1000); // PODE AJUSTAR ESSE SLEEP SE NECESSÁRIO
-                //script acerto
+                sleep_ms(1000);
             }
         }
     }
